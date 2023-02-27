@@ -50,7 +50,7 @@ extension VoIPController: PKPushRegistryDelegate {
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType) {
-        print("[VoIPController][pushRegistry][didReceiveIncomingPushWith] payload: \(payload.dictionaryPayload)")
+        print("[VoIPController][pushRegistry] payload: \(payload.dictionaryPayload)")
         let callData = payload.dictionaryPayload
         
         if type == .voIP{
@@ -63,12 +63,8 @@ extension VoIPController: PKPushRegistryDelegate {
                 .map { Int($0) ?? 0 }
             let userInfo = callData["user_info"] as? String
             
-            self.callKitController.reportIncomingCall(uuid: callId.lowercased(), callType: callType, callInitiatorId: callInitiatorId, callInitiatorName: callInitiatorName, opponents: callOpponents, userInfo: userInfo) { (error) in
-                if(error == nil){
-                    print("[VoIPController][didReceiveIncomingPushWith] reportIncomingCall SUCCESS")
-                } else {
-                    print("[VoIPController][didReceiveIncomingPushWith] reportIncomingCall ERROR: \(error?.localizedDescription ?? "none")")
-                }
+            self.callKitController.reportIncomingCall(uuid: callId, callType: callType, callInitiatorId: callInitiatorId, callInitiatorName: callInitiatorName, opponents: callOpponents, userInfo: userInfo) { (error) in
+                print("[VoIPController][didReceiveIncomingPushWith] reportIncomingCall ERROR: \(error?.localizedDescription ?? "none")")
             }
         }
     }

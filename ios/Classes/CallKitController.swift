@@ -107,32 +107,24 @@ class CallKitController : NSObject {
         update.supportsHolding = false
         update.supportsDTMF = false
         
-        if (self.currentCallData["session_id"] == nil || self.currentCallData["session_id"] as! String != uuid) {
-            print("[CallKitController][reportIncomingCall] report new call: \(uuid)")
-            provider.reportNewIncomingCall(with: UUID(uuidString: uuid)!, update: update) { error in
-                completion?(error)
-                if(error == nil){
-                    self.configureAudioSession()
-                    
-                    self.currentCallData["session_id"] = uuid
-                    self.currentCallData["call_type"] = callType
-                    self.currentCallData["caller_id"] = callInitiatorId
-                    self.currentCallData["caller_name"] = callInitiatorName
-                    self.currentCallData["call_opponents"] = opponents.map { String($0) }.joined(separator: ",")
-                    self.currentCallData["user_info"] = userInfo
-                    
-                    self.callStates[uuid] = .pending
-                    self.callsData[uuid] = self.currentCallData
-                }
+        provider.reportNewIncomingCall(with: UUID(uuidString: uuid)!, update: update) { error in
+            completion?(error)
+            if(error == nil){
+                self.currentCallData["session_id"] = uuid
+                self.currentCallData["call_type"] = callType
+                self.currentCallData["caller_id"] = callInitiatorId
+                self.currentCallData["caller_name"] = callInitiatorName
+                self.currentCallData["call_opponents"] = opponents.map { String($0) }.joined(separator: ",")
+                self.currentCallData["user_info"] = userInfo
+                
+                self.callStates[uuid] = .pending
+                self.callsData[uuid] = self.currentCallData
             }
-        } else if (self.currentCallData["session_id"] as! String == uuid) {
-            print("[CallKitController][reportIncomingCall] update existing call: \(uuid)")
-            provider.reportCall(with: UUID(uuidString: uuid)!, updated: update)
         }
     }
     
     func reportOutgoingCall(uuid : UUID, finishedConnecting: Bool){
-        print("CallKitController: report outgoing call: \(uuid) connected:\(finishedConnecting)")
+        print("report outgoing call: \(uuid) connected:\(finishedConnecting)")
         if !finishedConnecting {
             self.provider.reportOutgoingCall(with: uuid, startedConnectingAt: nil)
         } else {
@@ -141,8 +133,8 @@ class CallKitController : NSObject {
     }
     
     func reportCallEnded(uuid : UUID, reason: CallEndedReason){
-        print("CallKitController: report call ended: \(uuid)")
-        var cxReason : CXCallEndedReason
+        print("report call ended: \(uuid)")
+        var cxReason : CXCallEndedReason?
         switch reason {
         case .unanswered:
             cxReason = CXCallEndedReason.unanswered
@@ -151,40 +143,25 @@ class CallKitController : NSObject {
         default:
             cxReason = CXCallEndedReason.failed
         }
-        self.callStates[uuid.uuidString.lowercased()] = .rejected
-        self.provider.reportCall(with: uuid, endedAt: Date.init(), reason: cxReason)
+        self.callStates[uuid.uuidString] = .pending
+        self.provider.reportCall(with: uuid, endedAt: Date.init(), reason: cxReason!)
     }
     
     func getCallState(uuid: String) -> CallState {
-        print("CallKitController: getCallState: \(self.callStates[uuid.lowercased()] ?? .unknown)")
-        return self.callStates[uuid.lowercased()] ?? .unknown
+        return self.callStates[uuid] ?? .unknown
     }
     
     func setCallState(uuid: String, callState: String){
-        self.callStates[uuid.lowercased()] = CallState(rawValue: callState)
+        self.callStates[uuid] = CallState(rawValue: callState)
     }
     
     func getCallData(uuid: String) -> [String: Any]{
-        return self.callsData[uuid.lowercased()] ?? [:]
+        return self.callsData[uuid] ?? [:]
     }
     
     func clearCallData(uuid: String){
         self.callStates.removeAll()
         self.callsData.removeAll()
-    }
-    
-    func configureAudioSession(){
-        let audioSession = AVAudioSession.sharedInstance()
-        
-        do {
-            try audioSession.setCategory(AVAudioSession.Category.playback, options: AVAudioSession.CategoryOptions.allowBluetooth)
-            try audioSession.setMode(AVAudioSession.Mode.voiceChat)
-            try audioSession.setPreferredSampleRate(44100.0)
-            try audioSession.setPreferredIOBufferDuration(0.005)
-            try audioSession.setActive(true)
-        } catch {
-            print(error)
-        }
     }
 }
 
@@ -192,26 +169,26 @@ class CallKitController : NSObject {
 extension CallKitController {
     
     func end(uuid: UUID) {
-        print("CallKitController: user requested end call")
+        print("CallController: user requested end call")
         let endCallAction = CXEndCallAction(call: uuid)
         let transaction = CXTransaction(action: endCallAction)
         
-        self.callStates[uuid.uuidString.lowercased()] = .rejected
+        self.callStates[uuid.uuidString] = .rejected
         requestTransaction(transaction)
     }
     
     private func requestTransaction(_ transaction: CXTransaction) {
         callController.request(transaction) { error in
             if let error = error {
-                print("CallKitController: Error requesting transaction: \(error.localizedDescription)")
+                print("Error requesting transaction: \(error)")
             } else {
-                print("CallKitController: Requested transaction successfully")
+                print("Requested transaction successfully")
             }
         }
     }
     
     func setHeld(uuid: UUID, onHold: Bool) {
-        print("CallKitController: user requested hold call")
+        print("CallController: user requested hold call")
         let setHeldCallAction = CXSetHeldCallAction(call: uuid, onHold: onHold)
         
         let transaction = CXTransaction()
@@ -221,7 +198,6 @@ extension CallKitController {
     }
     
     func setMute(uuid: UUID, muted: Bool){
-        print("CallKitController: user requested mute call: muted - \(muted)")
         let muteCallAction = CXSetMutedCallAction(call: uuid, muted: muted);
         let transaction = CXTransaction()
         transaction.addAction(muteCallAction)
@@ -229,28 +205,17 @@ extension CallKitController {
     }
     
     func startCall(handle: String, videoEnabled: Bool, uuid: String? = nil) {
-        print("CallKitController: user requested start call handle:\(handle), videoEnabled: \(videoEnabled) uuid: \(uuid ?? "")")
+        print("CallController: user requested start call \(handle)")
         let handle = CXHandle(type: .generic, value: handle)
-        let callUUID = uuid == nil ? UUID() : UUID(uuidString: uuid!)
+        let callUUID = uuid == nil ? UUID() : UUID(uuidString: uuid!);
         let startCallAction = CXStartCallAction(call: callUUID!, handle: handle)
         startCallAction.isVideo = videoEnabled
         
         let transaction = CXTransaction(action: startCallAction)
         
-        self.callStates[uuid!.lowercased()] = .accepted
+        self.callStates[uuid!] = .accepted
         
-        requestTransaction(transaction);
-    }
-    
-    func answerCall(uuid: String) {
-        print("CallKitController: user requested answer call, uuid: \(uuid)")
-        let callUUID = UUID(uuidString: uuid)
-        let answerCallAction = CXAnswerCallAction(call: callUUID!)
-        let transaction = CXTransaction(action: answerCallAction)
-        
-        self.callStates[uuid.lowercased()] = .accepted
-        
-        requestTransaction(transaction);
+        requestTransaction(transaction)
     }
 }
 
@@ -260,50 +225,49 @@ extension CallKitController: CXProviderDelegate {
         
     }
     
+    //action.callUUID
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        print("CallKitController: Answer Call \(action.callUUID.uuidString)")
-        actionListener?(.answerCall, action.callUUID, currentCallData)
-        self.callStates[action.callUUID.uuidString.lowercased()] = .accepted
+        print("CallController: Answer Call")
+        actionListener?(.answerCall,action.callUUID,currentCallData)
+        self.callStates[action.callUUID.uuidString] = .accepted
         action.fulfill()
     }
     
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-        print("CallKitController: Audio session activated")
-        self.configureAudioSession()
-    }
-    
-    func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
-        print("CallKitController: Audio session deactivated")
+        //startAudio()
+        
+        print("CallController: Audio session activated")
+        
     }
     
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        print("CallKitController: End Call")
-        actionListener?(.endCall, action.callUUID, currentCallData)
-        self.callStates[action.callUUID.uuidString.lowercased()] = .rejected
+        print("CallController: End Call")
+        actionListener?(.endCall, action.callUUID,currentCallData)
+        self.callStates[action.callUUID.uuidString] = .rejected
         action.fulfill()
     }
     
     func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
-        print("CallKitController: Set Held")
+        print("CallController: Set Held")
         actionListener?(.setHeld, action.callUUID, ["isOnHold": action.isOnHold])
         action.fulfill()
     }
     
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
-        print("CallKitController: Mute call")
+        print("CallController: Mute call")
         if (action.isMuted){
-            actionListener?(.setMuted, action.callUUID, currentCallData)
+            actionListener?(.setMuted, action.callUUID,currentCallData)
         } else {
-            actionListener?(.setUnMuted, action.callUUID, currentCallData)
+            actionListener?(.setUnMuted, action.callUUID,currentCallData)
         }
         
         action.fulfill()
     }
     
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
-        print("CallKitController: Start Call")
         actionListener?(.startCall, action.callUUID, currentCallData)
-        self.callStates[action.callUUID.uuidString.lowercased()] = .accepted
+        print("CallController: Start Call")
+        self.callStates[action.callUUID.uuidString] = .accepted
         action.fulfill()
     }
 }
