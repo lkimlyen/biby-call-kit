@@ -83,7 +83,6 @@ class ConnectycubeFCMService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-
         LocalBroadcastManager.getInstance(applicationContext)
             .sendBroadcast(Intent(ACTION_TOKEN_REFRESHED).putExtra(EXTRA_PUSH_TOKEN, token))
     }

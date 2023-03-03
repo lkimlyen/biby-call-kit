@@ -124,30 +124,37 @@ class IncomingCallActivity : Activity() {
     }
 
     private fun initUi() {
+        val isRecallTitleTxt: TextView =
+            findViewById(resources.getIdentifier("is_recall", "id", packageName))
         val callTitleTxt: TextView =
             findViewById(resources.getIdentifier("user_name_txt", "id", packageName))
         val price: TextView =
             findViewById(resources.getIdentifier("user_price_txt", "id", packageName))
 
 
-        val avatar: ImageView =
+        val avatar: CircleImageView =
             findViewById(resources.getIdentifier("user_avatar", "id", packageName))
+        var icCall: ImageView = findViewById(resources.getIdentifier("ic_call", "id", packageName))
         var obj = JSONObject(callUserInfo)
+        var action = obj?.getInt("action")
         var caller = obj?.getString("caller")!!
         var callerObj = JSONObject(caller);
         var callerAvatar = callerObj?.getString("avatar")!!
+        if (obj.has("message")) {
+            isRecallTitleTxt.visibility = View.VISIBLE
+        }
 
-        var callHistory = obj?.getString("call_history")!!
-        var callHistoryObj = JSONObject(callHistory);
-        var callPrice = callHistoryObj?.getString("pay_per_minute")!!
-
-
-
+        if(action == 22){
+            var uri = "@drawable/ic_call"
+            var imageResource = resources.getIdentifier(uri, null, packageName)
+            var res = applicationContext.getDrawable(imageResource);
+            icCall.setImageDrawable(res)
+        }
 
         Glide.with(this).load(callerAvatar).placeholder(R.drawable.default_avatar)
             .into(avatar)
         callTitleTxt.text = callInitiatorName
-        price.text = "수신 시 1분당 ${callPrice}P가 소모됩니다."
+        price.text = "${obj?.getString("pay_per_minute")} Dool / min"
     }
 
     // calls from layout file
