@@ -55,12 +55,13 @@ class ConnectycubeFCMReceiver : BroadcastReceiver() {
 
     private fun processInviteCallEvent(applicationContext: Context, data: Map<String, String>) {
         val callId = data["session_id"]
-
+        Log.d(TAG, "session_id $callId")
         if (callId == null || CALL_STATE_UNKNOWN != getCallState(
                 applicationContext,
                 callId
             )
         ) {
+            Log.d(TAG, "ko the khoi tao")
             return
         }
 
@@ -76,8 +77,10 @@ class ConnectycubeFCMReceiver : BroadcastReceiver() {
         val userInfo = data["user_info"] ?: JSONObject(emptyMap<String, String>()).toString()
 
         if (callType == null || callInitiatorId == null || callInitiatorName == null || callOpponents.isEmpty()) {
+            Log.d(TAG, "co cai nao do empty")
             return
         }
+
 
         showCallNotification(
             applicationContext,
