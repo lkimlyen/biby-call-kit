@@ -576,7 +576,6 @@ class CallStreamHandler(private var context: Context) : EventChannel.StreamHandl
                 val launchIntent = getLaunchIntent(context!!)
                 launchIntent?.action = ACTION_CALL_ACCEPT
                 context.startActivity(launchIntent)
-                Log.d("ConnectycubeFlutterCallKitPlugin", "start activity ne")
             }
         }
     }

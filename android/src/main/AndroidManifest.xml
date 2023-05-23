@@ -4,7 +4,17 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
 
     <application>
-        <receiver android:name=".EventReceiver" />
+        <receiver
+            android:name=".EventReceiver"
+            android:exported="false"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".IncomingCallActivity"
             android:excludeFromRecents="true"
