@@ -89,10 +89,15 @@ class EventReceiver : BroadcastReceiver() {
                         broadcastIntent
                     )
                 }
+//
+//                val launchIntent = getLaunchIntent(context)
+//                launchIntent?.action = ACTION_CALL_ACCEPT
+//                context.startActivity(launchIntent)
 
-                val launchIntent = getLaunchIntent(context)
-                launchIntent?.action = ACTION_CALL_ACCEPT
-                context.startActivity(launchIntent)
+                context.startActivity(launchIntent.apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    launchIntent?.action = ACTION_CALL_ACCEPT
+                })
             }
 
             ACTION_CALL_NOTIFICATION_CANCELED -> {

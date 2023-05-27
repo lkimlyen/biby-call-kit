@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.connectycube.flutter.connectycube_flutter_call_kit.utils.getColorizedText
 import com.connectycube.flutter.connectycube_flutter_call_kit.utils.getString
+import android.app.TaskStackBuilder
 
 const val CALL_CHANNEL_ID = "calls_channel_id"
 const val CALL_CHANNEL_NAME = "Calls"
@@ -35,14 +36,19 @@ fun showCallNotification(
     val notificationManager = NotificationManagerCompat.from(context)
 
     val intent = getLaunchIntent(context)
+    val pendingIntent =  TaskStackBuilder.create(context).run {
+        // Add the intent, which inflates the back stack
+        addNextIntentWithParentStack(intent)
+        // Get the PendingIntent containing the entire back stack
+        getPendingIntent(0,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT)
 
-    val pendingIntent = PendingIntent.getActivity(
-        context,
-        callId.hashCode(),
-        intent,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
-
-    )
+//    val pendingIntent = PendingIntent.getActivity(
+//        context,
+//        callId.hashCode(),
+//        intent,
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+//
+//    )
 
     var ringtone: Uri
 
