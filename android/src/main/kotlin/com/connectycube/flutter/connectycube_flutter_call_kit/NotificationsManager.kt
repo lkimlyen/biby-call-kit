@@ -38,10 +38,13 @@ fun showCallNotification(
     val intent = getLaunchIntent(context)
     val pendingIntent =  TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
-        addNextIntentWithParentStack(intent)
+        addNextIntentWithParentStack(intent!!)
         // Get the PendingIntent containing the entire back stack
-        getPendingIntent(0,  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT)
-
+        getPendingIntent(
+            0,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
 //    val pendingIntent = PendingIntent.getActivity(
 //        context,
 //        callId.hashCode(),
