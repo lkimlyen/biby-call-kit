@@ -215,18 +215,29 @@ fun addCallAcceptAction(
     bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, opponents)
     bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
 
-    val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(
-        context,
-        callId.hashCode(),
-        Intent(context, EventReceiver::class.java)
-            .setAction(ACTION_CALL_ACCEPT)
-            .putExtras(bundle),
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
-    )
+    val intent = getLaunchIntent(context)
+    val pendingIntent =  TaskStackBuilder.create(context).run {
+        // Add the intent, which inflates the back stack
+        addNextIntentWithParentStack(intent!!)
+        // Get the PendingIntent containing the entire back stack
+        getPendingIntent(
+            0,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+//    val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(
+//        context,
+//        callId.hashCode(),
+//        Intent(context, EventReceiver::class.java)
+//            .setAction(ACTION_CALL_ACCEPT)
+//            .putExtras(bundle),
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+//    )
     val acceptAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
         context.resources.getIdentifier("ic_menu_call", "drawable", context.packageName),
         getColorizedText("수락", "#4CB050"),
-        acceptPendingIntent
+        pendingIntent
     )
         .build()
     notificationBuilder.addAction(acceptAction)
