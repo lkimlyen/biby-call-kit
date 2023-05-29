@@ -46,6 +46,7 @@ class IncomingCallActivity : Activity() {
     private var callInitiatorName: String? = null
     private var callOpponents: ArrayList<Int>? = ArrayList()
     private var callUserInfo: String? = null
+    private var actionAccept: String? = ""
 
 
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
@@ -62,11 +63,18 @@ class IncomingCallActivity : Activity() {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
+        actionAccept = intent.getStringExtra(EXTRA_CALL_ACTION)
 
         processIncomingData(intent)
         initUi()
         initCallStateReceiver()
         registerCallStateReceiver()
+
+        Handler().postDelayed({
+            if (actionAccept == ACTION_CALL_ACCEPT) {
+                startCall()
+            }
+        }, 200)
     }
 
     private fun initCallStateReceiver() {
@@ -84,6 +92,7 @@ class IncomingCallActivity : Activity() {
                     ACTION_CALL_NOTIFICATION_CANCELED, ACTION_CALL_REJECT, ACTION_CALL_ENDED -> {
                         finishAndRemoveTask()
                     }
+
                     ACTION_CALL_ACCEPT -> finishDelayed()
                 }
             }
@@ -144,7 +153,7 @@ class IncomingCallActivity : Activity() {
             isRecallTitleTxt.visibility = View.VISIBLE
         }
 
-        if(action == 22){
+        if (action == 22) {
             var uri = "@drawable/ic_call"
             var imageResource = resources.getIdentifier(uri, null, packageName)
             var res = applicationContext.getDrawable(imageResource);
@@ -175,6 +184,10 @@ class IncomingCallActivity : Activity() {
 
     // calls from layout file
     fun onStartCall(view: View?) {
+        startCall()
+    }
+
+    private fun startCall() {
         val bundle = Bundle()
         bundle.putString(EXTRA_CALL_ID, callId)
         bundle.putInt(EXTRA_CALL_TYPE, callType)

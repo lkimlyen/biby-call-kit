@@ -61,7 +61,6 @@ class ConnectycubeFCMReceiver : BroadcastReceiver() {
                 callId
             )
         ) {
-            Log.d(TAG, "ko the khoi tao")
             return
         }
 
@@ -77,7 +76,6 @@ class ConnectycubeFCMReceiver : BroadcastReceiver() {
         val userInfo = data["user_info"] ?: JSONObject(emptyMap<String, String>()).toString()
 
         if (callType == null || callInitiatorId == null || callInitiatorName == null || callOpponents.isEmpty()) {
-            Log.d(TAG, "co cai nao do empty")
             return
         }
 

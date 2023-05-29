@@ -234,6 +234,8 @@ fun addCallAcceptAction(
     intent.putExtra(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
     intent.putIntegerArrayListExtra(EXTRA_CALL_OPPONENTS, opponents)
     intent.putExtra(EXTRA_CALL_USER_INFO, userInfo)
+    intent.putExtra(EXTRA_CALL_TYPE, callType)
+    intent.putExtra(EXTRA_CALL_ACTION, ACTION_CALL_ACCEPT)
 
     val pendingIntent =  TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
