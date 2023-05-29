@@ -130,7 +130,7 @@ class IncomingCallActivity : Activity() {
         callInitiatorName = intent.getStringExtra(EXTRA_CALL_INITIATOR_NAME)
         callOpponents = intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)
         callUserInfo = intent.getStringExtra(EXTRA_CALL_USER_INFO)
-        actionAccept = intent.getBooleanExtra(EXTRA_CALL_ACCEPT)
+        actionAccept = intent.getBooleanExtra(EXTRA_CALL_ACCEPT,false)
         Log.d("yennnnn", "action accept $actionAccept")
 
     }
