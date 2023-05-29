@@ -15,6 +15,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
@@ -64,6 +65,7 @@ class IncomingCallActivity : Activity() {
             )
         }
         actionAccept = intent.getStringExtra(EXTRA_CALL_ACTION)
+        Log.d("yennnnn","action accept $actionAccept")
 
         processIncomingData(intent)
         initUi()
@@ -72,6 +74,7 @@ class IncomingCallActivity : Activity() {
 
         Handler().postDelayed({
             if (actionAccept == ACTION_CALL_ACCEPT) {
+                NotificationManagerCompat.from(this).cancel(callId.hashCode())
                 startCall()
             }
         }, 200)
