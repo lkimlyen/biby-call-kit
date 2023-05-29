@@ -208,10 +208,9 @@ fun addCallAcceptAction(
     userInfo: String
 ) {
 
-    val intent = Intent(context, IncomingAcceptCallActivity::class.java)
+    val intent = Intent(context, IncomingCallActivity::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     intent.putExtra(EXTRA_CALL_ID, callId)
-    intent.putExtra(EXTRA_CALL_TYPE, callType)
     intent.putExtra(EXTRA_CALL_INITIATOR_ID, callInitiatorId)
     intent.putExtra(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
     intent.putIntegerArrayListExtra(EXTRA_CALL_OPPONENTS, opponents)
