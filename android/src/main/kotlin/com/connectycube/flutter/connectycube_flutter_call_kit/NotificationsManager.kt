@@ -36,7 +36,7 @@ fun showCallNotification(
     val notificationManager = NotificationManagerCompat.from(context)
 
     val intent = getLaunchIntent(context)
-    val pendingIntent =  TaskStackBuilder.create(context).run {
+    val pendingIntent = TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
         addNextIntentWithParentStack(intent!!)
         // Get the PendingIntent containing the entire back stack
@@ -208,6 +208,23 @@ fun addCallAcceptAction(
     userInfo: String
 ) {
 
+    val bundle = Bundle()
+    bundle.putString(EXTRA_CALL_ID, callId)
+    bundle.putInt(EXTRA_CALL_TYPE, callType)
+    bundle.putInt(EXTRA_CALL_INITIATOR_ID, callInitiatorId)
+    bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
+    bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, opponents)
+    bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
+
+    val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(
+        context,
+        callId.hashCode(),
+        Intent(context, EventReceiver::class.java)
+            .setAction(ACTION_CALL_ACCEPT)
+            .putExtras(bundle),
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
     val intent = Intent(context, IncomingAcceptCallActivity::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     intent.putExtra(EXTRA_CALL_ID, callId)
@@ -218,7 +235,7 @@ fun addCallAcceptAction(
     intent.putExtra(EXTRA_CALL_USER_INFO, userInfo)
     intent.putExtra(EXTRA_CALL_TYPE, callType)
 
-    val pendingIntent =  TaskStackBuilder.create(context).run {
+    val pendingIntent = TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
         addNextIntentWithParentStack(intent)
         // Get the PendingIntent containing the entire back stack
@@ -227,10 +244,11 @@ fun addCallAcceptAction(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
+
     val acceptAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
         context.resources.getIdentifier("ic_menu_call", "drawable", context.packageName),
         getColorizedText("수락", "#4CB050"),
-        pendingIntent
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) pendingIntent else acceptPendingIntent
     )
         .build()
     notificationBuilder.addAction(acceptAction)
@@ -256,7 +274,7 @@ fun addCallFullScreenIntent(
     intent.putIntegerArrayListExtra(EXTRA_CALL_OPPONENTS, callOpponents)
     intent.putExtra(EXTRA_CALL_USER_INFO, userInfo)
 
-    val pendingIntent =  TaskStackBuilder.create(context).run {
+    val pendingIntent = TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
         addNextIntentWithParentStack(intent!!)
         // Get the PendingIntent containing the entire back stack
