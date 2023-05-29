@@ -64,17 +64,14 @@ class IncomingCallActivity : Activity() {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
-        actionAccept = intent.getStringExtra(EXTRA_CALL_ACTION)
-        Log.d("yennnnn","action accept $actionAccept")
-
         processIncomingData(intent)
         initUi()
         initCallStateReceiver()
         registerCallStateReceiver()
+        NotificationManagerCompat.from(this).cancel(callId.hashCode())
 
         Handler().postDelayed({
             if (actionAccept == ACTION_CALL_ACCEPT) {
-                NotificationManagerCompat.from(this).cancel(callId.hashCode())
                 startCall()
             }
         }, 200)
@@ -133,6 +130,9 @@ class IncomingCallActivity : Activity() {
         callInitiatorName = intent.getStringExtra(EXTRA_CALL_INITIATOR_NAME)
         callOpponents = intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)
         callUserInfo = intent.getStringExtra(EXTRA_CALL_USER_INFO)
+        actionAccept = intent.getStringExtra(EXTRA_CALL_ACTION)
+        Log.d("yennnnn","action accept $actionAccept")
+
     }
 
     private fun initUi() {

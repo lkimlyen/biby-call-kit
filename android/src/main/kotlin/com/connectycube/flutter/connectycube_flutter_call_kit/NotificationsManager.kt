@@ -239,7 +239,7 @@ fun addCallAcceptAction(
 
     val pendingIntent =  TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
-        addNextIntentWithParentStack(intent!!)
+        addNextIntentWithParentStack(intent)
         // Get the PendingIntent containing the entire back stack
         getPendingIntent(
             0,
@@ -329,8 +329,6 @@ fun addCancelCallNotificationIntent(
     bundle.putInt(EXTRA_CALL_INITIATOR_ID, callInitiatorId)
     bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
     bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
-
-
 
     val deleteCallNotificationPendingIntent = PendingIntent.getBroadcast(
         appContext,
