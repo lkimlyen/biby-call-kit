@@ -22,7 +22,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
 
 
-
 class IncomingAcceptCallActivity : Activity() {
     private lateinit var callStateReceiver: BroadcastReceiver
     private lateinit var localBroadcastManager: LocalBroadcastManager
@@ -114,6 +113,7 @@ class IncomingAcceptCallActivity : Activity() {
         callInitiatorName = intent.getStringExtra(EXTRA_CALL_INITIATOR_NAME)
         callOpponents = intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)
         callUserInfo = intent.getStringExtra(EXTRA_CALL_USER_INFO)
+        Log.d("yenyen", callUserInfo.toString())
 
     }
 
