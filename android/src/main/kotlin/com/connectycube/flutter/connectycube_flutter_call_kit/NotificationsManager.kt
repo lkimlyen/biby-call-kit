@@ -235,7 +235,7 @@ fun addCallAcceptAction(
     intent.putIntegerArrayListExtra(EXTRA_CALL_OPPONENTS, opponents)
     intent.putExtra(EXTRA_CALL_USER_INFO, userInfo)
     intent.putExtra(EXTRA_CALL_TYPE, callType)
-    intent.putExtra(EXTRA_CALL_ACTION, ACTION_CALL_ACCEPT)
+    intent.putExtra(EXTRA_CALL_ACCEPT, true)
 
     val pendingIntent =  TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
@@ -246,7 +246,6 @@ fun addCallAcceptAction(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
-    ///add version 1.1.5
 
 //    val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(
 //        context,

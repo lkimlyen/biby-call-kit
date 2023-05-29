@@ -47,7 +47,7 @@ class IncomingCallActivity : Activity() {
     private var callInitiatorName: String? = null
     private var callOpponents: ArrayList<Int>? = ArrayList()
     private var callUserInfo: String? = null
-    private var actionAccept: String? = ""
+    private var actionAccept: Boolean = false
 
 
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
@@ -71,7 +71,7 @@ class IncomingCallActivity : Activity() {
         NotificationManagerCompat.from(this).cancel(callId.hashCode())
 
         Handler().postDelayed({
-            if (actionAccept == ACTION_CALL_ACCEPT) {
+            if (actionAccept) {
                 startCall()
             }
         }, 200)
@@ -130,8 +130,8 @@ class IncomingCallActivity : Activity() {
         callInitiatorName = intent.getStringExtra(EXTRA_CALL_INITIATOR_NAME)
         callOpponents = intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)
         callUserInfo = intent.getStringExtra(EXTRA_CALL_USER_INFO)
-        actionAccept = intent.getStringExtra(EXTRA_CALL_ACTION)
-        Log.d("yennnnn","action accept $actionAccept")
+        actionAccept = intent.getBooleanExtra(EXTRA_CALL_ACCEPT)
+        Log.d("yennnnn", "action accept $actionAccept")
 
     }
 
