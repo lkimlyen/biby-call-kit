@@ -19,6 +19,7 @@ import androidx.annotation.Nullable
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
+import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicationForeground
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
 
@@ -39,6 +40,15 @@ class IncomingAcceptCallActivity : Activity() {
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (!isApplicationForeground(this)) {
+            val sharedPreference =
+                this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.putString("flutter.call_user_info", callUserInfo)
+            editor.apply()
+        }
+        startCall()
+
         setContentView(resources.getIdentifier("activity_incoming_call", "layout", packageName))
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
@@ -56,15 +66,7 @@ class IncomingAcceptCallActivity : Activity() {
         registerCallStateReceiver()
         NotificationManagerCompat.from(this).cancel(callId.hashCode())
 
-        val sharedPreference =  this.getSharedPreferences("FlutterSharedPreferences",MODE_PRIVATE)
-        val editor = sharedPreference.edit()
-        editor.putString("flutter.test", "Hello")
-        editor.putString("flutter.call_user_info",callUserInfo)
-        editor.apply()
 
-        Handler().postDelayed({
-            startCall()
-        }, 200)
     }
 
     private fun initCallStateReceiver() {

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
+import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicationForeground
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
 
@@ -130,7 +131,7 @@ class IncomingCallActivity : Activity() {
         callInitiatorName = intent.getStringExtra(EXTRA_CALL_INITIATOR_NAME)
         callOpponents = intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)
         callUserInfo = intent.getStringExtra(EXTRA_CALL_USER_INFO)
-        actionAccept = intent.getBooleanExtra(EXTRA_CALL_ACCEPT,false)
+        actionAccept = intent.getBooleanExtra(EXTRA_CALL_ACCEPT, false)
         Log.d("yennnnn", "action accept $actionAccept")
 
     }
@@ -191,6 +192,13 @@ class IncomingCallActivity : Activity() {
     }
 
     private fun startCall() {
+        if (!isApplicationForeground(this)) {
+            val sharedPreference =
+                this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.putString("flutter.call_user_info", callUserInfo)
+            editor.apply()
+        }
         val bundle = Bundle()
         bundle.putString(EXTRA_CALL_ID, callId)
         bundle.putInt(EXTRA_CALL_TYPE, callType)
