@@ -187,7 +187,7 @@ class IncomingAcceptCallActivity : Activity() {
         startCallIntent.putExtras(bundle)
 
 
-        val sharedPreference =  this.getPreferences(Context.MODE_PRIVATE)
+        val sharedPreference =  this.getSharedPreferences("FlutterSharedPreferences",MODE_PRIVATE)
         val editor = sharedPreference.edit()
         editor.putString(EXTRA_CALL_USER_INFO,callUserInfo)
         editor.apply()
