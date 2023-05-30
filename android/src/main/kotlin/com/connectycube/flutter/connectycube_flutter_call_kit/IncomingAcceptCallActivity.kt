@@ -40,6 +40,8 @@ class IncomingAcceptCallActivity : Activity() {
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        processIncomingData(intent)
         if (!isApplicationForeground(this)) {
             val sharedPreference =
                 this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
@@ -60,7 +62,6 @@ class IncomingAcceptCallActivity : Activity() {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
-        processIncomingData(intent)
         initUi()
         initCallStateReceiver()
         registerCallStateReceiver()
