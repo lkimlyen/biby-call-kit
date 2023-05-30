@@ -189,7 +189,7 @@ class IncomingAcceptCallActivity : Activity() {
 
         val sharedPreference =  this.getSharedPreferences("FlutterSharedPreferences",MODE_PRIVATE)
         val editor = sharedPreference.edit()
-        editor.putString(EXTRA_CALL_USER_INFO,callUserInfo)
+        editor.putString("flutter.call_user_info",callUserInfo)
         editor.apply()
 
         applicationContext.sendBroadcast(startCallIntent)
