@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -184,6 +185,13 @@ class IncomingAcceptCallActivity : Activity() {
         val startCallIntent = Intent(this, EventReceiver::class.java)
         startCallIntent.action = ACTION_CALL_ACCEPT
         startCallIntent.putExtras(bundle)
+
+
+        val sharedPreference =  this.getPreferences(Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putString(EXTRA_CALL_USER_INFO,callUserInfo)
+        editor.apply()
+
         applicationContext.sendBroadcast(startCallIntent)
     }
 }
