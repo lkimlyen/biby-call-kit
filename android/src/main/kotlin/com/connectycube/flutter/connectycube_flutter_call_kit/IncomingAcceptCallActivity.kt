@@ -56,6 +56,12 @@ class IncomingAcceptCallActivity : Activity() {
         registerCallStateReceiver()
         NotificationManagerCompat.from(this).cancel(callId.hashCode())
 
+        val sharedPreference =  this.getSharedPreferences("FlutterSharedPreferences",MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putString("flutter.test", "Hello")
+        editor.putString("flutter.call_user_info",callUserInfo)
+        editor.apply()
+
         Handler().postDelayed({
             startCall()
         }, 200)
@@ -185,12 +191,6 @@ class IncomingAcceptCallActivity : Activity() {
         val startCallIntent = Intent(this, EventReceiver::class.java)
         startCallIntent.action = ACTION_CALL_ACCEPT
         startCallIntent.putExtras(bundle)
-
-
-        val sharedPreference =  this.getSharedPreferences("FlutterSharedPreferences",MODE_PRIVATE)
-        val editor = sharedPreference.edit()
-        editor.putString("flutter.call_user_info",callUserInfo)
-        editor.apply()
 
         applicationContext.sendBroadcast(startCallIntent)
     }
