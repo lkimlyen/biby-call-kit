@@ -192,13 +192,11 @@ class IncomingCallActivity : Activity() {
     }
 
     private fun startCall() {
-        if (!isApplicationForeground(this)) {
-            val sharedPreference =
-                this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
-            val editor = sharedPreference.edit()
-            editor.putString("flutter.call_user_info", callUserInfo)
-            editor.apply()
-        }
+        val sharedPreference =
+            this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putString("flutter.call_user_info", callUserInfo)
+        editor.apply()
         val bundle = Bundle()
         bundle.putString(EXTRA_CALL_ID, callId)
         bundle.putInt(EXTRA_CALL_TYPE, callType)

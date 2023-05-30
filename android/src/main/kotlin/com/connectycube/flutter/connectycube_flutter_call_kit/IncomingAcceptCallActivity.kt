@@ -42,13 +42,11 @@ class IncomingAcceptCallActivity : Activity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         processIncomingData(intent)
-        if (!isApplicationForeground(this)) {
-            val sharedPreference =
-                this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
-            val editor = sharedPreference.edit()
-            editor.putString("flutter.call_user_info", callUserInfo)
-            editor.apply()
-        }
+        val sharedPreference =
+            this.getSharedPreferences("FlutterSharedPreferences", MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putString("flutter.call_user_info", callUserInfo)
+        editor.apply()
         startCall()
 
         setContentView(resources.getIdentifier("activity_incoming_call", "layout", packageName))
