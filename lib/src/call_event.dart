@@ -15,6 +15,7 @@ class CallEvent {
     required this.callerName,
     required this.opponentsIds,
     this.userInfo,
+    this.fromActivity,
   });
 
   final String sessionId;
@@ -28,6 +29,7 @@ class CallEvent {
   /// onCallAccepted, onCallRejectedWhenTerminated, or onCallRejected)
   /// after setting it in method showCallNotification
   final Map<String, String>? userInfo;
+  final bool? fromActivity;
 
   CallEvent copyWith({
     String? sessionId,
@@ -36,6 +38,7 @@ class CallEvent {
     String? callerName,
     Set<int>? opponentsIds,
     Map<String, String>? userInfo,
+    bool? fromActivity,
   }) {
     return CallEvent(
       sessionId: sessionId ?? this.sessionId,
@@ -44,6 +47,7 @@ class CallEvent {
       callerName: callerName ?? this.callerName,
       opponentsIds: opponentsIds ?? this.opponentsIds,
       userInfo: userInfo ?? this.userInfo,
+      fromActivity: fromActivity ?? this.fromActivity,
     );
   }
 
@@ -55,6 +59,7 @@ class CallEvent {
       'caller_name': callerName,
       'call_opponents': opponentsIds.join(','),
       'user_info': jsonEncode(userInfo ?? <String, String>{}),
+      'fromActivity': fromActivity,
     };
   }
 
@@ -69,6 +74,7 @@ class CallEvent {
       userInfo: map['user_info'] != null
           ? Map<String, String>.from(jsonDecode(map['user_info']))
           : null,
+        fromActivity: map['from_activity'] as bool?,
     );
 
     // userInfo: map['user_info'] == null || map['user_info'].isEmpty
@@ -90,6 +96,7 @@ class CallEvent {
         'callerId: $callerId, '
         'callerName: $callerName, '
         'opponentsIds: $opponentsIds, '
+        'fromActivity: $fromActivity, '
         'userInfo: $userInfo)';
   }
 
@@ -102,6 +109,7 @@ class CallEvent {
         other.callType == callType &&
         other.callerId == callerId &&
         other.callerName == callerName &&
+        other.fromActivity == fromActivity &&
         setEquals(other.opponentsIds, opponentsIds) &&
         mapEquals(other.userInfo, userInfo);
   }
@@ -112,6 +120,7 @@ class CallEvent {
     callType.hashCode ^
     callerId.hashCode ^
     callerName.hashCode ^
+    fromActivity.hashCode ^
     opponentsIds.hashCode ^
     userInfo.hashCode;
   }
