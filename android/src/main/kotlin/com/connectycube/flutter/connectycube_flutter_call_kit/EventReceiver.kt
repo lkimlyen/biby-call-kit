@@ -15,8 +15,6 @@ import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicatio
 class EventReceiver : BroadcastReceiver() {
     private val TAG = "EventReceiver"
     override fun onReceive(context: Context, intent: Intent?) {
-
-        print("intent ${intent!=null} ${intent?.action}")
         if (intent == null || TextUtils.isEmpty(intent.action)) return
 
         when (intent.action) {
@@ -28,6 +26,7 @@ class EventReceiver : BroadcastReceiver() {
                 val callInitiatorName = extras?.getString(EXTRA_CALL_INITIATOR_NAME)
                 val callOpponents = extras?.getIntegerArrayList(EXTRA_CALL_OPPONENTS)
                 val userInfo = extras?.getString(EXTRA_CALL_USER_INFO)
+                val fromActivity = extras?.getBoolean(EXTRA_FROM_ACTIVITY,false)
                 Log.i(TAG, "NotificationReceiver onReceive Call REJECT, callId: $callId")
 
                 val broadcastIntent = Intent(ACTION_CALL_REJECT)
@@ -38,6 +37,7 @@ class EventReceiver : BroadcastReceiver() {
                 bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
                 bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
                 bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
+                bundle.putBoolean(EXTRA_FROM_ACTIVITY, fromActivity ?: false)
                 broadcastIntent.putExtras(bundle)
 
                 LocalBroadcastManager.getInstance(context.applicationContext)
@@ -53,6 +53,8 @@ class EventReceiver : BroadcastReceiver() {
                         context,
                         broadcastIntent
                     )
+                }else{
+
                 }
             }
 

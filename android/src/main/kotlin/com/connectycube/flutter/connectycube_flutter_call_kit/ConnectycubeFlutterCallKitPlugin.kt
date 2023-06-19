@@ -551,6 +551,7 @@ class CallStreamHandler(private var context: Context) : EventChannel.StreamHandl
         callEventMap["call_opponents"] =
             intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)?.joinToString(separator = ",")
         callEventMap["user_info"] = intent.getStringExtra(EXTRA_CALL_USER_INFO)
+        callEventMap["from_activity"] = intent.getBooleanExtra(EXTRA_FROM_ACTIVITY,false)
 
         Log.d("ConnectycubeFlutterCallKitPlugin", "callEventMap: $callEventMap")
 

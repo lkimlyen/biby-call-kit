@@ -179,6 +179,7 @@ class IncomingCallActivity : Activity() {
         bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
         bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
         bundle.putString(EXTRA_CALL_USER_INFO, callUserInfo)
+        bundle.putBoolean(EXTRA_FROM_ACTIVITY, true)
 
         val endCallIntent = Intent(this, EventReceiver::class.java)
         endCallIntent.action = ACTION_CALL_REJECT
