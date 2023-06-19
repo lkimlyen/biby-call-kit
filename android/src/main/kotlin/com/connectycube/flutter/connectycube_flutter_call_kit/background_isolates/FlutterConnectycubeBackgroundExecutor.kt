@@ -241,7 +241,7 @@ class FlutterConnectycubeBackgroundExecutor : MethodCallHandler {
         parameters["call_opponents"] =
             intent.getIntegerArrayListExtra(EXTRA_CALL_OPPONENTS)?.joinToString(separator = ",")
         parameters["user_info"] = intent.getStringExtra(EXTRA_CALL_USER_INFO)
-        parameters["from_activity"] = intent.getBooleanExtra(EXTRA_FROM_ACTIVITY)
+        parameters["from_activity"] = intent.getBooleanExtra(EXTRA_FROM_ACTIVITY,false)
 
 
         backgroundChannel?.invokeMethod(
