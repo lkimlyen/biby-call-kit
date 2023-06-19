@@ -258,7 +258,7 @@ fun addCallFullScreenIntent(
 
     val pendingIntent =  TaskStackBuilder.create(context).run {
         // Add the intent, which inflates the back stack
-        addNextIntentWithParentStack(intent!!)
+        addNextIntentWithParentStack(intent)
         // Get the PendingIntent containing the entire back stack
         getPendingIntent(
             0,

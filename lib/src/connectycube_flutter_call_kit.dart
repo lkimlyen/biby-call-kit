@@ -110,9 +110,7 @@ class ConnectycubeFlutterCallKit {
 
   static void initEventsHandler() {
     _eventChannel.receiveBroadcastStream().listen((rawData) {
-      print('[initEventsHandler] rawData: $rawData');
       final eventData = Map<String, dynamic>.from(rawData);
-
       _processEvent(eventData);
     });
   }

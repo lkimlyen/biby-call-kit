@@ -16,6 +16,7 @@ class EventReceiver : BroadcastReceiver() {
     private val TAG = "EventReceiver"
     override fun onReceive(context: Context, intent: Intent?) {
 
+        print("intent ${intent!=null} ${intent?.action}")
         if (intent == null || TextUtils.isEmpty(intent.action)) return
 
         when (intent.action) {
