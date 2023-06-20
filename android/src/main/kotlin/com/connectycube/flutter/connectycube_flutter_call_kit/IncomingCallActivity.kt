@@ -18,6 +18,7 @@ import androidx.annotation.Nullable
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
+import com.connectycube.flutter.connectycube_flutter_call_kit.background_isolates.ConnectycubeFlutterBgPerformingService
 import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicationForeground
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
@@ -180,6 +181,12 @@ class IncomingCallActivity : Activity() {
         bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
         bundle.putString(EXTRA_CALL_USER_INFO, callUserInfo)
         bundle.putBoolean(EXTRA_FROM_ACTIVITY, true)
+
+        if (!isApplicationForeground(this)) {
+          print("app is background")
+        }else{
+            print("app is foreground")
+        }
 
         val endCallIntent = Intent(this, EventReceiver::class.java)
         endCallIntent.action = ACTION_CALL_REJECT
