@@ -15,7 +15,6 @@ import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicatio
 class EventReceiver : BroadcastReceiver() {
     private val TAG = "EventReceiver"
     override fun onReceive(context: Context, intent: Intent?) {
-        println("event receive intent != null is ${intent != null} & action ${intent?.action}")
         if (intent == null || TextUtils.isEmpty(intent.action)) return
 
         when (intent.action) {
@@ -51,15 +50,6 @@ class EventReceiver : BroadcastReceiver() {
                     context,
                     broadcastIntent
                 )
-//                if (!isApplicationForeground(context)) {
-//                    broadcastIntent.putExtra("userCallbackHandleName", REJECTED_IN_BACKGROUND)
-//                    ConnectycubeFlutterBgPerformingService.enqueueMessageProcessing(
-//                        context,
-//                        broadcastIntent
-//                    )
-//                }else{
-//
-//                }
             }
 
             ACTION_CALL_ACCEPT -> {
