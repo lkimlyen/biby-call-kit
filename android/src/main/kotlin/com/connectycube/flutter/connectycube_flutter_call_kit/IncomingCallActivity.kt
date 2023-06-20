@@ -182,7 +182,6 @@ class IncomingCallActivity : Activity() {
             bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
             bundle.putString(EXTRA_CALL_USER_INFO, callUserInfo)
             bundle.putBoolean(EXTRA_FROM_ACTIVITY, true)
-            println("click end call ne")
             val endCallIntent = Intent(this, EventReceiver::class.java)
             endCallIntent.action = ACTION_CALL_REJECT
             endCallIntent.putExtras(bundle)
