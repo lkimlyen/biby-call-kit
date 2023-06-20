@@ -173,25 +173,24 @@ class IncomingCallActivity : Activity() {
 
     // calls from layout file
     fun onEndCall(view: View?) {
-        val bundle = Bundle()
-        bundle.putString(EXTRA_CALL_ID, callId)
-        bundle.putInt(EXTRA_CALL_TYPE, callType)
-        bundle.putInt(EXTRA_CALL_INITIATOR_ID, callInitiatorId)
-        bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
-        bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
-        bundle.putString(EXTRA_CALL_USER_INFO, callUserInfo)
-        bundle.putBoolean(EXTRA_FROM_ACTIVITY, true)
-
-        if (!isApplicationForeground(this)) {
-          print("app is background")
-        }else{
-            print("app is foreground")
+        try {
+            val bundle = Bundle()
+            bundle.putString(EXTRA_CALL_ID, callId)
+            bundle.putInt(EXTRA_CALL_TYPE, callType)
+            bundle.putInt(EXTRA_CALL_INITIATOR_ID, callInitiatorId)
+            bundle.putString(EXTRA_CALL_INITIATOR_NAME, callInitiatorName)
+            bundle.putIntegerArrayList(EXTRA_CALL_OPPONENTS, callOpponents)
+            bundle.putString(EXTRA_CALL_USER_INFO, callUserInfo)
+            bundle.putBoolean(EXTRA_FROM_ACTIVITY, true)
+            println("click end call ne")
+            val endCallIntent = Intent(this, EventReceiver::class.java)
+            endCallIntent.action = ACTION_CALL_REJECT
+            endCallIntent.putExtras(bundle)
+            applicationContext.sendBroadcast(endCallIntent)
+        }catch (e : Exception){
+            println(e.message)
         }
 
-        val endCallIntent = Intent(this, EventReceiver::class.java)
-        endCallIntent.action = ACTION_CALL_REJECT
-        endCallIntent.putExtras(bundle)
-        applicationContext.sendBroadcast(endCallIntent)
     }
 
     // calls from layout file

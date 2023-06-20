@@ -15,6 +15,7 @@ import com.connectycube.flutter.connectycube_flutter_call_kit.utils.isApplicatio
 class EventReceiver : BroadcastReceiver() {
     private val TAG = "EventReceiver"
     override fun onReceive(context: Context, intent: Intent?) {
+        println("event receive intent != null is ${intent != null} & action ${intent?.action}")
         if (intent == null || TextUtils.isEmpty(intent.action)) return
 
         when (intent.action) {
@@ -27,7 +28,6 @@ class EventReceiver : BroadcastReceiver() {
                 val callOpponents = extras?.getIntegerArrayList(EXTRA_CALL_OPPONENTS)
                 val userInfo = extras?.getString(EXTRA_CALL_USER_INFO)
                 val fromActivity = extras?.getBoolean(EXTRA_FROM_ACTIVITY,false)
-                Log.i(TAG, "NotificationReceiver onReceive Call REJECT, callId: $callId")
 
                 val broadcastIntent = Intent(ACTION_CALL_REJECT)
                 val bundle = Bundle()
@@ -46,7 +46,7 @@ class EventReceiver : BroadcastReceiver() {
                 NotificationManagerCompat.from(context).cancel(callId.hashCode())
 
                 processCallEnded(context, callId!!)
-
+                println("event reject call")
                 if (!isApplicationForeground(context)) {
                     broadcastIntent.putExtra("userCallbackHandleName", REJECTED_IN_BACKGROUND)
                     ConnectycubeFlutterBgPerformingService.enqueueMessageProcessing(
@@ -66,7 +66,6 @@ class EventReceiver : BroadcastReceiver() {
                 val callInitiatorName = extras?.getString(EXTRA_CALL_INITIATOR_NAME)
                 val callOpponents = extras?.getIntegerArrayList(EXTRA_CALL_OPPONENTS)
                 val userInfo = extras?.getString(EXTRA_CALL_USER_INFO)
-                Log.i(TAG, "NotificationReceiver onReceive Call ACCEPT, callId: $callId")
 
                 val broadcastIntent = Intent(ACTION_CALL_ACCEPT)
                 val bundle = Bundle()
@@ -105,10 +104,6 @@ class EventReceiver : BroadcastReceiver() {
                 val callInitiatorId = extras?.getInt(EXTRA_CALL_INITIATOR_ID)
                 val callInitiatorName = extras?.getString(EXTRA_CALL_INITIATOR_NAME)
                 val userInfo = extras?.getString(EXTRA_CALL_USER_INFO)
-                Log.i(
-                    TAG,
-                    "NotificationReceiver onReceive Delete Call Notification, callId: $callId"
-                )
                 LocalBroadcastManager.getInstance(context.applicationContext)
                     .sendBroadcast(
                         Intent(ACTION_CALL_NOTIFICATION_CANCELED).putExtra(
