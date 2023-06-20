@@ -188,6 +188,7 @@ class IncomingCallActivity : Activity() {
             endCallIntent.putExtras(bundle)
             applicationContext.sendBroadcast(endCallIntent)
         }catch (e : Exception){
+            println("do exception ne")
             println(e.message)
         }
 
